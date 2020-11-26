@@ -1,0 +1,83 @@
+version: '3'
+
+services: 
+    dev_payfast:
+        image: node:10
+
+        stdin_open: true
+
+        tty: true
+
+        container_name: payfast
+
+        ports: 
+            - "3000:3000"
+        
+        volumes: 
+            - ./payfast:/app
+        
+        working_dir: /app 
+        networks: 
+            - production-network  
+
+        entrypoint: ['npm', 'start']
+            
+    api_cardfast:
+        image: node:10
+
+        stdin_open: true
+
+        tty: true
+
+        container_name: cardfast
+
+        ports: 
+            - "3001:3001"
+        
+        volumes: 
+            - ./cardfast:/app
+        
+        working_dir: /app 
+        networks: 
+            - production-network
+        
+        entrypoint: ['npm', 'start']
+
+    mysql_localhost:
+        image: mysql:5.7
+
+        stdin_open: true
+
+        tty: true
+
+        environment:
+            MYSQL_ROOT_PASSWORD: "root"
+            MYSQL_DATABASE: "payfast"
+            
+        container_name: mysql_dev
+
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./mysql:/var/lib/mysql
+
+        networks: 
+            - production-network
+
+    adminer:
+        image: adminer
+        ports:
+            - 8080:8080
+
+        networks: 
+            - production-network
+
+networks:
+  production-network:
+    driver: bridge
+
+# docker-compose build    
+# docker-compose up -d    
+# docker-compose exec node npm start
+# docker-compose run node bash
+        
